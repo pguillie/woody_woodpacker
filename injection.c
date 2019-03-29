@@ -6,12 +6,16 @@
 #include <fcntl.h>
 #include <string.h>
 
-#define JMP_IDX (10)
+#define JMP_OFF (48)
 
-int opcode[] = {/* writes "Hello, World!" and jumps */
-	0x00000ee8, 0x6c654800, 0x202c6f6c, 0x6c726f57,
-	0xb80a2164, 0x00000001, 0x000001bf, 0x0eba5e00,
-	0x0f000000, 0xe9909005, 0x42424242
+char opcode[] = {
+	0x50, 0x57, 0x56, 0x52, 0xe8, 0x0e, 0x00, 0x00,
+	0x00, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20,
+	0x57, 0x6f, 0x72, 0x6c, 0x64, 0x21, 0x0a, 0xb8,
+	0x01, 0x00, 0x00, 0x00, 0xbf, 0x01, 0x00, 0x00,
+	0x00, 0x5e, 0xba, 0x0e, 0x00, 0x00, 0x00, 0x0f,
+	0x05, 0x5a, 0x5e, 0x5f, 0x58, 0x90, 0x90, 0xe9,
+	0x42, 0x42, 0x42, 0x42
 };
 
 static int inject(void *ptr)
@@ -23,9 +27,8 @@ static int inject(void *ptr)
 	while (phnum-- && !(phdr->p_type == PT_LOAD && phdr->p_flags & PF_X))
 		phdr++;
 	Elf64_Addr entry = phdr->p_offset + phdr->p_filesz;
-	opcode[JMP_IDX] = (int)(ehdr->e_entry - entry - sizeof(opcode));
-	printf("Jump to original entry point patched: 'jmp %#x'\n",
-		opcode[JMP_IDX]);
+	*(int *)(opcode + JMP_OFF) = (int)(ehdr->e_entry - entry - sizeof(opcode));
+	printf("Jump patched: 'jmp %#x'\n", *(int *)(opcode + JMP_OFF));
 	ehdr->e_entry = entry;
 	printf("New entry point set to %#x\n", ehdr->e_entry);
 	phdr->p_filesz += sizeof(opcode);
@@ -58,7 +61,7 @@ int main(int ac, char *av[])
 		fputs("Failed to map file", stderr);
 		return (1);
 	}
-	inject(ptr); //return value
+	inject(ptr);
 	fd = open((ac == 2 ? av[1] : "a.out"), O_WRONLY);
 	if (fd < 0) {
 		fputs("Failed to reopen file", stderr);
