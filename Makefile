@@ -1,22 +1,25 @@
 NAME	= woody_woodpacker
 CC	= gcc
-CFLAGS	= -Wall -Wextra -Werror -Iincludes -I$(dir $(LIBFT))includes
+CFLAGS	= -Wall -Wextra -Werror -Iincludes -I$(dir $(LIBFT))includes -g3 -fsanitize=address
 
 LIBFT	= libftasm/libfts.a
 
 INCLUDES = $(addprefix includes/, \
-	woody.h \
-	woody_error.h \
+	err_fct.h \
+	error.h \
+	packer.h \
+	struct.h \
 )
 SOURCES = $(addprefix sources/, \
 	main.c \
-	woody.c \
-	woody32.c \
-	woody64.c \
-	woody_elf_ident.c \
-	woody_error.c \
-	woody_mapping.c \
-	woody_write_binary.c \
+	packer.c \
+	packer32.c \
+	packer64.c \
+	elf_ident.c \
+	err_fct.c \
+	error.c \
+	mapping.c \
+	write_woody.c \
 )
 OBJECTS = $(SOURCES:%.c=%.o)
 
@@ -25,7 +28,7 @@ OBJECTS = $(SOURCES:%.c=%.o)
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJECTS)
-	$(CC) -o $@ $^ $(LIBFT)
+	$(CC) -g3 -fsanitize=address -o $@ $^ $(LIBFT)
 
 $(OBJECTS): $(INCLUDES) Makefile
 
