@@ -75,6 +75,12 @@ int err_open(const char *file)
 	return (1);
 }
 
+int err_space(const char *file __attribute__ ((unused)))
+{
+	fprintf(stderr, ERR_PREF "not enough space on text segment!\n");
+	return (1);
+}
+
 int err_stat(const char *file)
 {
 	fprintf(stderr, ERR_PREF "failed to stat '%s': %s\n", file,

@@ -17,8 +17,6 @@ int packer(const char *filename)
 		failure = packer32(&bin);
 	else
 		failure = packer64(&bin);
-	if (!failure)
-		failure = write_woody(&bin);
 	if (unmap_file(&bin))
 		return (1);
 	return (failure ? 1 : 0);

@@ -14,6 +14,7 @@ int err_ei_nident(const char *file);
 int err_mmap(const char *file);
 int err_munmap(const char *file);
 int err_open(const char *file);
+int err_space(const char *file);
 int err_stat(const char *file);
 int err_write(const char *file);
 

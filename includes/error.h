@@ -13,6 +13,7 @@ typedef enum {
 	ERR_MMAP,
 	ERR_MUNMAP,
 	ERR_OPEN,
+	ERR_SPACE,
 	ERR_STAT,
 	ERR_WRITE,
 	ERR_NUMBER,
