@@ -4,7 +4,8 @@
 
 #include "packer.h"
 
-int elf_ident(const char *filename, unsigned char *class)
+int
+elf_ident(const char *filename, unsigned char *class)
 {
 	unsigned char ident[EI_NIDENT];
 	unsigned char elfmag[] = {ELFMAG0, ELFMAG1, ELFMAG2, ELFMAG3};

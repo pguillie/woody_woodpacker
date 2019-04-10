@@ -10,6 +10,7 @@ typedef enum {
 	ERR_EI_CLASS32, //tmp
 	ERR_EI_ELFMAG,
 	ERR_EI_NIDENT,
+	ERR_EHDR,
 	ERR_MMAP,
 	ERR_MUNMAP,
 	ERR_OPEN,
@@ -19,6 +20,7 @@ typedef enum {
 	ERR_NUMBER,
 } err_id;
 
-int error(err_id id, const char *file);
+int
+error(err_id id, const char *file);
 
 #endif /* ERROR_H */

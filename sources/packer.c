@@ -2,7 +2,8 @@
 
 #include "packer.h"
 
-int packer(const char *filename)
+int
+packer(const char *filename)
 {
 	struct elf_info bin;
 	unsigned char class;

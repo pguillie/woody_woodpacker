@@ -2,7 +2,8 @@
 
 #include "packer.h"
 
-int main(int ac, char *av[])
+int
+main(int ac, char *av[])
 {
 	if (ac != 2) {
 		fprintf(stderr, "Usage: woody_woodpacker FILE\n");

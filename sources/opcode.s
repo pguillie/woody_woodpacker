@@ -6,9 +6,9 @@ foo:
 	lea	rdi, [rel bar]
 	xor	rcx, rcx
 bar:
-	dec	byte [rdi + rcx]
+	xor	byte [rdi + rcx], 0x42
 	inc	rcx
-	cmp	rcx, 0x10
+	cmp	rcx, 0x1000
 	jl	bar
 
 	pop	rdx

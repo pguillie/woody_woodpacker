@@ -5,12 +5,14 @@
 
 #include "packer.h"
 
-static void close_fd(int *fd)
+static void
+close_fd(int *fd)
 {
 	close(*fd);
 }
 
-int map_file(struct elf_info *file)
+int
+map_file(struct elf_info *file)
 {
 	int fd __attribute__ ((cleanup (close_fd)));
 	struct stat buf;
@@ -28,7 +30,8 @@ int map_file(struct elf_info *file)
 	return (0);
 }
 
-int unmap_file(struct elf_info *file)
+int
+unmap_file(struct elf_info *file)
 {
 	if (munmap(file->addr, file->length) < 0)
 		return (error(ERR_MUNMAP, file->name));

@@ -12,6 +12,7 @@ err_fct fct[ERR_NUMBER] = {
 	err_ei_class32,
 	err_ei_elfmag,
 	err_ei_nident,
+	err_ehdr,
 	err_mmap,
 	err_munmap,
 	err_open,
@@ -20,7 +21,8 @@ err_fct fct[ERR_NUMBER] = {
 	err_write,
 };
 
-int error(err_id id, const char *file)
+int
+error(err_id id, const char *file)
 {
 	if (id < ERR_NUMBER)
 		return (fct[id](file));
