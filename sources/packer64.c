@@ -2,21 +2,17 @@
 
 #include "packer.h"
 
-char inc_0x10[] = {
-	0x57, 0x51, 0x52, 0x48, 0x8d, 0x3d, 0x03, 0x00,
-	0x00, 0x00, 0x48, 0x31, 0xc9, 0xfe, 0x0c, 0x0f,
-	0x48, 0xff, 0xc1, 0x48, 0x81, 0xf9, 0x10, 0x00,
-	0x00, 0x00, 0x7c, 0xf1, 0x5a, 0x59, 0x5f, 0xe9,
-	0x42, 0x42, 0x42, 0x42
-};
-
-char xor_16[] = {
+char stub[] = {
 	0x57, 0x51, 0x52, 0x48, 0x8d, 0x3d, 0x03, 0x00,
 	0x00, 0x00, 0x48, 0x31, 0xc9, 0x80, 0x34, 0x0f,
 	0x42, 0x48, 0xff, 0xc1, 0x48, 0x81, 0xf9, 0x10,
 	0x00, 0x00, 0x00, 0x7c, 0xf0, 0x5a, 0x59, 0x5f,
 	0xe9, 0x42, 0x42, 0x42, 0x42
 };
+
+#define STUB_BEG (0x06)
+#define STUB_LEN (0x17)
+#define STUB_JMP (0x21)
 
 static int
 check_ehdr(struct elf_info *bin)
@@ -34,8 +30,8 @@ check_ehdr(struct elf_info *bin)
 	return (0);
 }
 
-static int
-inject(struct elf_info *bin)
+static Elf64_Phdr *
+get_xseg(struct elf_info *bin)
 {
 	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)bin->addr;
 	Elf64_Phdr *phdr = (Elf64_Phdr *)((char *)bin->addr + ehdr->e_phoff);
@@ -43,21 +39,38 @@ inject(struct elf_info *bin)
 
 	while (phnum-- && !(phdr->p_type == PT_LOAD && phdr->p_flags & PF_X))
 		phdr++;
+	return (phdr);
+}
+
+static int
+encrypt(void *addr, size_t len)
+{
+	while (len--)
+		((char *)addr)[len] ^= 0x42;
+	return (0);
+}
+
+static int
+inject(struct elf_info *bin)
+{
+	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)bin->addr;
+	Elf64_Phdr *phdr = get_xseg(bin);
+
 	if ((((phdr->p_filesz + phdr->p_align - 1) & ~(phdr->p_align - 1))
-			- phdr->p_filesz) < sizeof(xor_16))
+			- phdr->p_filesz) < sizeof(stub))
 		return (error(ERR_SPACE, bin->name));
-	*(uint32_t *)(xor_16 + 6) = (uint32_t)(-phdr->p_memsz - 6 - 4);
-	*(uint32_t *)(xor_16 + sizeof(xor_16) - 4)
-		= (uint32_t)(ehdr->e_entry - phdr->p_vaddr - phdr->p_memsz
-			- sizeof(xor_16));
-	ft_memcpy((char *)(bin->addr) + phdr->p_offset + phdr->p_filesz,
-		xor_16, sizeof(xor_16));
+	*(uint32_t *)(stub + STUB_BEG) = (uint32_t)(- phdr->p_memsz
+		- (STUB_BEG + 4));
+	*(uint32_t *)(stub + STUB_LEN) = (uint32_t)(phdr->p_filesz);
+	*(uint32_t *)(stub + STUB_JMP) = (uint32_t)(ehdr->e_entry
+		- phdr->p_vaddr - phdr->p_memsz - (STUB_JMP + 4));
+	encrypt(bin->addr + phdr->p_offset, phdr->p_filesz);
+	ft_memcpy((char *)bin->addr + phdr->p_offset + phdr->p_filesz, stub,
+		sizeof(stub));
 	ehdr->e_entry = phdr->p_vaddr + phdr->p_memsz;
-	phdr->p_filesz += sizeof(xor_16);
-	phdr->p_memsz += sizeof(xor_16);
+	phdr->p_filesz += sizeof(stub);
+	phdr->p_memsz += sizeof(stub);
 	phdr->p_flags |= PF_W;
-	for (int i = 0; i < 0x10; i++)
-		((char *)bin->addr + phdr->p_offset)[i] ^= 0x42;
 	return (0);
 }
 
