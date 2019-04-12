@@ -4,6 +4,7 @@
 #include "err_fct.h"
 
 err_fct fct[ERR_NUMBER] = {
+	err_corrupt,
 	err_e_entry,
 	err_e_machine,
 	err_e_phoff,
@@ -13,11 +14,14 @@ err_fct fct[ERR_NUMBER] = {
 	err_ei_elfmag,
 	err_ei_nident,
 	err_ehdr,
+	err_lseek,
 	err_mmap,
 	err_munmap,
 	err_open,
+	err_phdr,
 	err_space,
 	err_stat,
+	err_usage,
 	err_write,
 };
 
