@@ -122,6 +122,13 @@ err_phdr(const char *file)
 }
 
 int
+err_shdr(const char *sect)
+{
+	fprintf(stderr, "%s: '%s' section not found\n", program, sect);
+	return (1);
+}
+
+int
 err_space(const char *file __attribute__ ((unused)))
 {
 	fprintf(stderr, "%s: not enough space on text segment!\n",
@@ -134,6 +141,13 @@ err_stat(const char *file)
 {
 	fprintf(stderr, "%s: failed to stat '%s': %s\n", program, file,
 		strerror(errno));
+	return (1);
+}
+
+int
+err_text(const char *member)
+{
+	fprintf(stderr, "%s: text section must have %s\n", program, member);
 	return (1);
 }
 

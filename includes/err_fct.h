@@ -49,10 +49,16 @@ int
 err_phdr(const char *file);
 
 int
+err_shdr(const char *sect);
+
+int
 err_space(const char *file); //tmp
 
 int
 err_stat(const char *file);
+
+int
+err_text(const char *member);
 
 int
 err_usage(const char *file);

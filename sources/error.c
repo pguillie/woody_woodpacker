@@ -19,8 +19,10 @@ err_fct fct[ERR_NUMBER] = {
 	err_munmap,
 	err_open,
 	err_phdr,
+	err_shdr,
 	err_space,
 	err_stat,
+	err_text,
 	err_usage,
 	err_write,
 };
