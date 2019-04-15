@@ -4,19 +4,7 @@
 typedef int (*err_fct)(const char *);
 
 int
-err_corrupt(const char *file);
-
-int
-err_e_entry(const char *file);
-
-int
-err_e_machine(const char *file);
-
-int
-err_e_phoff(const char *file);
-
-int
-err_e_type(const char *file);
+err_corrupt(const char *elem);
 
 int
 err_ei_class(const char *file);
@@ -31,7 +19,7 @@ int
 err_ei_nident(const char *file);
 
 int
-err_ehdr(const char *file);
+err_ehdr(const char *member);
 
 int
 err_lseek(const char *file);
@@ -46,7 +34,7 @@ int
 err_open(const char *file);
 
 int
-err_phdr(const char *file);
+err_phdr(const char *seg);
 
 int
 err_shdr(const char *sect);

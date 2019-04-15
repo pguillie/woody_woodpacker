@@ -5,10 +5,6 @@
 
 err_fct fct[ERR_NUMBER] = {
 	err_corrupt,
-	err_e_entry,
-	err_e_machine,
-	err_e_phoff,
-	err_e_type,
 	err_ei_class,
 	err_ei_class32,
 	err_ei_elfmag,

@@ -1,6 +1,5 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <elf.h>
 #include <unistd.h>
 #include <fcntl.h>
 

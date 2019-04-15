@@ -7,39 +7,10 @@
 char *program;
 
 int
-err_corrupt(const char *file)
+err_corrupt(const char *elem)
 {
-	fprintf(stderr, "%s: '%s' is corrupted\n", program, file);
-	return (1);
-}
-
-int
-err_e_entry(const char *file)
-{
-	fprintf(stderr, "%s: '%s' has no valid entry point\n", program, file);
-	return (1);
-}
-
-int
-err_e_machine(const char *file)
-{
-	fprintf(stderr, "%s: '%s' is not made for the current architecture\n",
-		program, file);
-	return (1);
-}
-
-int
-err_e_phoff(const char *file)
-{
-	fprintf(stderr, "%s: '%s' has no program header table\n", program,
-		file);
-	return (1);
-}
-
-int
-err_e_type(const char *file)
-{
-	fprintf(stderr, "%s: '%s' is not an executable file\n", program, file);
+	fprintf(stderr, "%s: corrupted, truncated or malformed file:"
+		"t%s extends past end-of-file\n", program, elem);
 	return (1);
 }
 
@@ -52,7 +23,7 @@ err_ei_class(const char *file)
 }
 
 int
-err_ei_class32(const char *file __attribute__ ((unused)))
+err_ei_class32(const char *null __attribute__ ((unused)))
 {
 	fprintf(stderr, "%s: 32-bit architecture is not supported yet\n",
 		program);
@@ -75,9 +46,10 @@ err_ei_nident(const char *file)
 }
 
 int
-err_ehdr(const char *file)
+err_ehdr(const char *member)
 {
-	fprintf(stderr, "%s: failed to get '%s' ELF header\n", program, file);
+	fprintf(stderr, "%s: ELF header must specify a valid %s\n", program,
+		member);
 	return (1);
 }
 
@@ -114,17 +86,16 @@ err_open(const char *file)
 }
 
 int
-err_phdr(const char *file)
+err_phdr(const char *seg)
 {
-	fprintf(stderr, "%s: failed to find host segment in '%s'\n", program,
-		file);
+	fprintf(stderr, "%s: %s segment not found\n", program, seg);
 	return (1);
 }
 
 int
 err_shdr(const char *sect)
 {
-	fprintf(stderr, "%s: '%s' section not found\n", program, sect);
+	fprintf(stderr, "%s: %s section not found\n", program, sect);
 	return (1);
 }
 

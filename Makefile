@@ -14,6 +14,7 @@ INCLUDES = $(addprefix includes/, \
 SOURCES = $(addprefix sources/, \
 	err_fct.c \
 	error.c \
+	getters64.c \
 	main.c \
 	packer.c \
 	packer32.c \
