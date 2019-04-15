@@ -58,15 +58,6 @@ get_exec_phdr(Elf64_Ehdr *ehdr, Elf64_Phdr **phdr, struct elf_info *bin)
 	if ((*phdr)->p_offset + (*phdr)->p_filesz > bin->length)
 		return (error(ERR_CORRUPT, 0));
 	return (0);
-	/* while (phnum--) { */
-	/* 	if ((*phdr)->p_type == PT_LOAD && (*phdr)->p_flags & PF_X) { */
-	/* 		if ((*phdr)->p_offset + (*phdr)->p_filesz > bin->length) */
-	/* 			return (error(ERR_CORRUPT, 0)); */
-	/* 		return (0); */
-	/* 	} */
-	/* 	(*phdr)++; */
-	/* } */
-	/* return (error(ERR_PHDR, 0)); */
 }
 
 static int
@@ -81,23 +72,15 @@ get_strtab(Elf64_Ehdr *ehdr, Elf64_Shdr **strtab, struct elf_info *bin)
 			if ((*strtab)->sh_offset + (*strtab)->sh_size
 				> bin->length)
 				return (error(ERR_CORRUPT, "AAA"));
-			if (((char *)bin->addr + (*strtab)->sh_offset)[(*strtab)->sh_size - 1] != '\0')
+			if (((char *)bin->addr + (*strtab)->sh_offset)[(*strtab)->sh_size - 1] != '\0') //
 				return (error(ERR_CORRUPT, "BBB"));
-			if (ft_strcmp((char *)bin->addr + (*strtab)->sh_offset + (*strtab)->sh_name, ".shstrtab") == 0)
+			if (ft_strcmp((char *)bin->addr + (*strtab)->sh_offset
+				      + (*strtab)->sh_name, ".shstrtab") == 0)
 				return (0);
 		}
 		(*strtab)++;
 	}
 	return (error(ERR_SHDR, ".shstrtab"));
-
-	/* if ((*strtab)->sh_type != SHT_STRTAB) */
-	/* 	return (error(ERR_SHDR, "strtab")); */
-	/* if ((*strtab)->sh_offset + (*strtab)->sh_size > bin->length) */
-	/* 	return (error(ERR_CORRUPT, 0)); */
-	/* if (*((char *)bin->addr + (*strtab)->sh_offset + (*strtab)->sh_size) */
-	/* 	!= '\0') */
-	/* 	return (error(ERR_CORRUPT, 0)); */
-	/* return (0); */
 }
 
 static int
@@ -136,18 +119,11 @@ get_text_shdr(Elf64_Ehdr *ehdr, Elf64_Shdr **shdr, struct elf_info *bin)
 static int
 patch(Elf64_Ehdr *ehdr, Elf64_Phdr *phdr, Elf64_Shdr *shdr)
 {
-	/* *(uint32_t *)(stub + TEXT_OFF) = (uint32_t)(shdr->sh_offset */
-	/* 	- (phdr->p_vaddr + phdr->p_memsz + TEXT_OFF + 4)); */
-	/* *(uint32_t *)(stub + TEXT_LEN) = (uint32_t)(shdr->sh_size); */
-	/* *(uint32_t *)(stub + JMP_OLD) = (uint32_t)(ehdr->e_entry */
-	/* 	- (phdr->p_vaddr + phdr->p_memsz + JMP_OLD + 4)); */
-	(void)shdr;
-
-	*(uint32_t *)(stub + STUB_BEG) = (uint32_t)(-phdr->p_memsz
-		- (STUB_BEG + 4));
-	*(uint32_t *)(stub + STUB_LEN) = (uint32_t)(phdr->p_filesz);
-	*(uint32_t *)(stub + STUB_JMP) = (uint32_t)(ehdr->e_entry
-		- phdr->p_vaddr - phdr->p_memsz - (STUB_JMP + 4));
+	*(uint32_t *)(stub + TEXT_OFF) = (uint32_t)(shdr->sh_offset
+		- (phdr->p_vaddr + phdr->p_memsz + TEXT_OFF + 4));
+	*(uint32_t *)(stub + TEXT_LEN) = (uint32_t)(shdr->sh_size);
+	*(uint32_t *)(stub + JMP_OLD) = (uint32_t)(ehdr->e_entry
+		- (phdr->p_vaddr + phdr->p_memsz + JMP_OLD + 4));
 	return (0);
 }
 
@@ -193,7 +169,7 @@ packer64(struct elf_info *bin)
 	patch(ehdr, phdr, shdr); //
 	//generate key from stub
 	//API to get text section and call a real encryption algorithm
-	if (encrypt(bin->addr + phdr->p_offset, phdr->p_filesz))
+	if (encrypt(bin->addr + shdr->sh_offset, shdr->sh_size))
 		return (1);
 	if (inject(phdr, bin))
 		return (1);
