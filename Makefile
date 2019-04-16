@@ -1,6 +1,8 @@
 NAME	= woody_woodpacker
 CC	= gcc
+AS	= nasm
 CFLAGS	= -Wall -Wextra -Werror -Iincludes -I$(dir $(LIBFT))includes
+ASFLAGS	= -felf64
 
 LIBFT	= libftasm/libfts.a
 
@@ -11,7 +13,8 @@ INCLUDES = $(addprefix includes/, \
 	program.h \
 	struct.h \
 )
-SOURCES = $(addprefix sources/, \
+
+C_SOURCES = \
 	err_fct.c \
 	error.c \
 	getters64.c \
@@ -19,15 +22,21 @@ SOURCES = $(addprefix sources/, \
 	packer.c \
 	packer32.c \
 	packer64.c \
+
+ASM_SOURCES = \
+	parasite.s \
+
+OBJECTS = $(addprefix sources/, \
+	$(ASM_SOURCES:%.s=%.o) \
+	$(C_SOURCES:%.c=%.o) \
 )
-OBJECTS = $(SOURCES:%.c=%.o)
 
 .PHONY: all clean fclean re
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJECTS)
-	$(CC) -o $@ $^ $(LIBFT)
+	$(CC) -o $@ $^ $(LIBFT) -no-pie
 
 $(OBJECTS): $(INCLUDES) Makefile
 
