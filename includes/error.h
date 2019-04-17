@@ -2,6 +2,7 @@
 # define ERROR_H
 
 typedef enum {
+	ERR_ALLOC,
 	ERR_CORRUPT,
 	ERR_EI_CLASS,
 	ERR_EI_CLASS32, //tmp

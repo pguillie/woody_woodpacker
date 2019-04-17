@@ -4,6 +4,7 @@
 #include "err_fct.h"
 
 err_fct fct[ERR_NUMBER] = {
+	err_alloc,
 	err_corrupt,
 	err_ei_class,
 	err_ei_class32,

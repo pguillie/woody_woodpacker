@@ -7,10 +7,17 @@
 char *program;
 
 int
+err_alloc(const char *obj)
+{
+	fprintf(stderr, "%s: failed to allocate %s\n", program, obj);
+	return (1);
+}
+
+int
 err_corrupt(const char *elem)
 {
 	fprintf(stderr, "%s: corrupted, truncated or malformed file:"
-		"t%s extends past end-of-file\n", program, elem);
+		"%s extends past end-of-file\n", program, elem);
 	return (1);
 }
 

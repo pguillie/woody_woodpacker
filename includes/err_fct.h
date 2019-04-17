@@ -4,6 +4,9 @@
 typedef int (*err_fct)(const char *);
 
 int
+err_alloc(const char *obj);
+
+int
 err_corrupt(const char *elem);
 
 int
