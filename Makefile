@@ -1,7 +1,7 @@
 NAME	= woody_woodpacker
 CC	= gcc
 AS	= nasm
-CFLAGS	= -Wall -Wextra -Werror -Iincludes -I$(dir $(LIBFT))includes
+CFLAGS	= -Wall -Wextra -Werror -Iincludes -I$(dir $(LIBFT))includes -g3 -fsanitize=address
 ASFLAGS	= -felf64
 
 LIBFT	= libftasm/libfts.a
@@ -36,7 +36,7 @@ OBJECTS = $(addprefix sources/, \
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJECTS)
-	$(CC) -o $@ $^ $(LIBFT) -no-pie
+	$(CC) -o $@ $^ $(LIBFT) -fsanitize=address
 
 $(OBJECTS): $(INCLUDES) Makefile
 
