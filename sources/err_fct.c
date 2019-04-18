@@ -93,6 +93,13 @@ err_open(const char *file)
 }
 
 int
+err_packed(const char *file)
+{
+	fprintf(stderr, "%s: '%s' is already packed!\n", program, file);
+	return (1);
+}
+
+int
 err_phdr(const char *seg)
 {
 	fprintf(stderr, "%s: %s segment not found\n", program, seg);

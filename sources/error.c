@@ -15,6 +15,7 @@ err_fct fct[ERR_NUMBER] = {
 	err_mmap,
 	err_munmap,
 	err_open,
+	err_packed,
 	err_phdr,
 	err_shdr,
 	err_space,

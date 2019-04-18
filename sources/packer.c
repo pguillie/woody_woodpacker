@@ -19,6 +19,8 @@ elf_ident(int fd, struct elf_info *bin)
 		return (error(ERR_EI_ELFMAG, bin->name));
 	if (ident[EI_CLASS] != ELFCLASS32 && ident[EI_CLASS] != ELFCLASS64)
 		return (error(ERR_EI_CLASS, bin->name));
+	if (ft_memcmp(ident + EI_PAD, "Plectre", EI_NIDENT - EI_PAD) == 0)
+		return (error(ERR_PACKED, bin->name));
 	bin->class = ident[EI_CLASS];
 	if (lseek(fd, 0, SEEK_SET) != 0)
 		return (error(ERR_LSEEK, bin->name));
@@ -51,6 +53,7 @@ woody(struct elf_info *bin)
 	int fd __attribute__ ((cleanup (close_fd)));
 	ssize_t bytes;
 
+	ft_memcpy((char *)bin->addr + EI_PAD, "Plectre", EI_NIDENT - EI_PAD);
 	if ((fd = open("woody", O_WRONLY | O_CREAT | O_TRUNC, 0755)) < 0)
 		return (error(ERR_OPEN, "woody"));
 	bytes = write(fd, bin->addr, bin->length);

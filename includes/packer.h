@@ -34,10 +34,4 @@ encrypt(void *addr, size_t length, uint64_t key);
 void
 parasite_end(void);
 
-int
-map_file(struct elf_info *file);
-
-int
-unmap_file(struct elf_info *file);
-
 #endif /* PACKER_H */
