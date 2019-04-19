@@ -1,3 +1,5 @@
+#include <sys/mman.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -10,8 +12,6 @@
 #define TEXT_OFF ((PARASITE_ENTRY) + 20)
 #define TEXT_LEN ((PARASITE_ENTRY) + 25)
 #define JUMP_OLD ((PARASITE_ENTRY) + 84)
-
-char *parasite_buf;
 
 static int
 check_ehdr(Elf64_Ehdr *ehdr, size_t length)
@@ -34,11 +34,11 @@ check_ehdr(Elf64_Ehdr *ehdr, size_t length)
 static int
 patch(Elf64_Ehdr *ehdr, Elf64_Phdr *phdr, Elf64_Shdr *shdr)
 {
-	*(uint32_t *)(parasite_buf + PARA_LEN) = (uint32_t)(PARASITE_SIZE);
-	*(uint32_t *)(parasite_buf + TEXT_OFF) = (uint32_t)(shdr->sh_offset
+	*(uint32_t *)(parasite + PARA_LEN) = (uint32_t)(PARASITE_SIZE);
+	*(uint32_t *)(parasite + TEXT_OFF) = (uint32_t)(shdr->sh_offset
 		- (phdr->p_offset + phdr->p_filesz + TEXT_OFF + 4));
-	*(uint32_t *)(parasite_buf + TEXT_LEN) = (uint32_t)(shdr->sh_size);
-	*(uint32_t *)(parasite_buf + JUMP_OLD) = (uint32_t)(ehdr->e_entry
+	*(uint32_t *)(parasite + TEXT_LEN) = (uint32_t)(shdr->sh_size);
+	*(uint32_t *)(parasite + JUMP_OLD) = (uint32_t)(ehdr->e_entry
 		- (phdr->p_vaddr + phdr->p_memsz + JUMP_OLD + 4));
 	return (0);
 }
@@ -50,7 +50,7 @@ inject(Elf64_Ehdr *ehdr, Elf64_Phdr *phdr, struct elf_info *bin)
 		- phdr->p_filesz < PARASITE_SIZE)
 		return (error(ERR_SPACE, bin->name));
 	ft_memcpy((char *)bin->addr + phdr->p_offset + phdr->p_filesz,
-		parasite_buf, PARASITE_SIZE);
+		parasite, PARASITE_SIZE);
 	ehdr->e_entry = phdr->p_vaddr + phdr->p_memsz;
 	phdr->p_filesz += PARASITE_SIZE;
 	phdr->p_memsz += PARASITE_SIZE;
@@ -73,11 +73,11 @@ packer64(struct elf_info *bin)
 		return (1);
 	if (get_text_shdr64(ehdr, &shdr, bin))
 		return (1);
-	if ((parasite_buf = malloc(PARASITE_SIZE)) == NULL)
-		return (error(ERR_ALLOC, "parasite buffer"));
-	ft_memcpy(parasite_buf, parasite, PARASITE_SIZE);
+	if (mprotect((void *)((uint64_t)parasite & (uint64_t)-getpagesize()),
+			PARASITE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC))
+		return (error(ERR_PROT, "parasite"));
 	patch(ehdr, phdr, shdr);
-	key = hash(parasite_buf, PARASITE_SIZE);
+	key = hash(parasite, PARASITE_SIZE);
 	printf("encryption key: %#.16lx\n", key);
 	encrypt(bin->addr + shdr->sh_offset, shdr->sh_size, key);
 	if (inject(ehdr, phdr, bin))

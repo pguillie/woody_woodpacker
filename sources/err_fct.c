@@ -7,13 +7,6 @@
 char *program;
 
 int
-err_alloc(const char *obj)
-{
-	fprintf(stderr, "%s: failed to allocate %s\n", program, obj);
-	return (1);
-}
-
-int
 err_corrupt(const char *elem)
 {
 	fprintf(stderr, "%s: corrupted, truncated or malformed file:"
@@ -103,6 +96,14 @@ int
 err_phdr(const char *seg)
 {
 	fprintf(stderr, "%s: %s segment not found\n", program, seg);
+	return (1);
+}
+
+int
+err_prot(const char *parasite)
+{
+	fprintf(stderr, "%s: failed to set '%s' memory protection\n", program,
+		parasite);
 	return (1);
 }
 

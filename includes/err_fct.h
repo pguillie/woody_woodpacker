@@ -4,9 +4,6 @@
 typedef int (*err_fct)(const char *);
 
 int
-err_alloc(const char *obj); //tmp
-
-int
 err_corrupt(const char *elem);
 
 int
@@ -41,6 +38,9 @@ err_packed(const char *file);
 
 int
 err_phdr(const char *seg);
+
+int
+err_prot(const char *parasite);
 
 int
 err_shdr(const char *sect);

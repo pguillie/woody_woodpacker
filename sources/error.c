@@ -4,7 +4,6 @@
 #include "err_fct.h"
 
 err_fct fct[ERR_NUMBER] = {
-	err_alloc,
 	err_corrupt,
 	err_ei_class,
 	err_ei_class32,
@@ -17,6 +16,7 @@ err_fct fct[ERR_NUMBER] = {
 	err_open,
 	err_packed,
 	err_phdr,
+	err_prot,
 	err_shdr,
 	err_space,
 	err_stat,
